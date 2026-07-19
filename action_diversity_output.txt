@@ -1,3 +1,0 @@
-Actor Checkpoint: ddpg_actor_FINAL.pth
-Raw Actions - Mean: 3.7690, Std: 3.1843, Range: [0.2005, 11.5601]
-Scaled Actions - Mean: 3.0000, Std: 2.5339, Range: [0.1545, 9.5572]
