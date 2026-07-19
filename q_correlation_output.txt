@@ -1,5 +1,0 @@
-Critic: ddpg_critic_FINAL.pth
-Pearson Correlation: 0.0799
-Spearman Rank Correlation: 0.0077
-Q_pred std: 13.8045, range: [-48.5547, -9.9865]
-Return std: 21.2169, range: [-121.5151, 1.2918]
