@@ -1,0 +1,20 @@
+# Data (too large / regeneratable)
+dataset.csv
+dataset_backup.csv
+
+# Replay buffer data (regeneratable)
+*.npy
+
+# Checkpoints (keep only the final reported result)
+*.pth
+!ddpg_actor_FINAL.pth
+!ddpg_critic_FINAL.pth
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# IDE internals -- should never be committed
+.gemini/
+scratch/

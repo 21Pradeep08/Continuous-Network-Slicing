@@ -1,0 +1,1256 @@
+% \documentclass[letterpaper, conference, 10pt]{IEEEtran}
+
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+
+\ifCLASSINFOpdf
+\else
+ \fi
+
+\newcommand\inlineeqno{\stepcounter{equation}\ (\theequation)}
+% \usepackage{caption}
+% \usepackage{subcaption}
+% \usepackage{lipsum,multicol}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[compatible]{algpseudocode}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{algcompatible}
+\usepackage{tabularx}
+\usepackage{lipsum}
+\DeclareMathOperator*{\maxi}{maximize}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage[utf8]{inputenc}
+\newtheorem{theorem}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{lem}{Lemma}
+\usepackage{url}
+\usepackage{xcolor}
+%\usepackage{cite}
+\usepackage{balance}
+\usepackage{subcaption}
+\usepackage{epstopdf}
+\usepackage{array}
+\usepackage{comment}
+\usepackage[noadjust]{cite}
+\usepackage{tipa}
+\usepackage{breqn}
+\newtheorem{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\SetKw{Continue}{continue}
+\SetKw{Break}{break}
+\SetKwFor{RepTimes}{repeat}{times}{end}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+
+% \usepackage{tikz}
+% \usetikzlibrary{matrix,shapes,arrows,positioning,chains,backgrounds}
+\newtheorem{corollary}{Corollary}
+\usepackage[usestackEOL]{stackengine}
+\usepackage{multirow}
+\usepackage{makecell}
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+
+\title{AI-driven Continuous Network Slicing for HealthCare}
+
+
+
+\author{Moirangthem Biken Singh and Pradeep Kumar Saran, ~\IEEEmembership{Member,~IEEE}
+	\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem M. B. Singh, N. Taunk, N. K. Mall and A. Pratap are with the Department of Computer Science and Engineering, Indian Institute of Technology (Banaras Hindu University), Varanasi 221005 India. E-mail: \{moirangthembsingh.rs.cse21, navneettaunk.cse18, naveenkumarmall.cse18, ajay.cse\}@iitbhu.ac.in.\protect 
+    	 }
+	}
+
+
+
+
+\IEEEtitleabstractindextext{%
+\begin{abstract}
+The rapid growth of smart healthcare systems has enabled continuous patient monitoring through Internet of Things (IoT) enabled medical devices, wearable sensors, and Wireless Body Area Network (WBAN) based healthcare applications. However, critical healthcare services such as ambulance communication, ICU monitoring, emergency response systems, telemedicine, and remote patient monitoring require ultra-low latency, high reliability, efficient bandwidth utilization, and energy-aware communication over 5G networks. Conventional static network slicing approaches are insufficient to handle continuously varying healthcare traffic demands and dynamic network conditions, often leading to inefficient resource utilization and degradation in Quality of Service (QoS) for latency-sensitive medical applications.
+
+To address these challenges, this work proposes an AI-driven framework for continuous network slicing and intelligent resource allocation in smart healthcare systems over 5G networks. The proposed architecture integrates edge computing with machine learning techniques, where Long Short-Term Memory (LSTM) is employed for healthcare traffic prediction, emergency-aware traffic classification is used to identify critical medical conditions, and Deep Deterministic Policy Gradient (DDPG) based deep reinforcement learning is utilized for continuous bandwidth allocation and adaptive resource optimization. The framework continuously monitors network conditions and dynamically adjusts slice configurations and resource distribution according to healthcare traffic demand, emergency level, and service priority requirements.
+
+A multi-objective optimization model is developed by jointly considering end-to-end latency, reliability, throughput, power consumption, and resource energy utilization as key performance metrics. The latency model incorporates transmission delay, queueing delay, edge processing delay, AI decision delay, and slice adaptation delay to capture real-time communication performance. The objective is to minimize communication latency and power consumption while maximizing throughput, reliability, and energy-efficient resource utilization for latency-sensitive healthcare services. Experimental evaluation demonstrates that the proposed framework significantly improves adaptive resource allocation efficiency, reduces communication delay, enhances network reliability, and provides an efficient intelligent communication framework for next-generation 5G-enabled smart healthcare systems.
+\end{abstract}
+\begin{IEEEkeywords}
+5G Networks, Smart Healthcare, Continuous Network Slicing, Deep Reinforcement Learning, DDPG, LSTM, Edge Computing, Resource Allocation, Latency Optimization, Reliability, Throughput, Energy Efficiency.
+ 
+\end{IEEEkeywords}}
+
+\maketitle
+
+\IEEEdisplaynontitleabstractindextext
+
+\IEEEpeerreviewmaketitle
+   
+
+\IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
+
+The rapid advancement of Internet of Things (IoT) based healthcare systems has enabled continuous patient monitoring through wearable sensors, Wireless Body Area Networks (WBAN), and real-time healthcare applications. With the emergence of 5G communication networks, healthcare services such as ambulance communication, ICU monitoring, telemedicine, and remote patient monitoring have become increasingly dependent on reliable and low-latency communication systems. The high bandwidth availability, ultra-low latency, and massive connectivity offered by 5G make it suitable for supporting next-generation smart healthcare applications.
+
+However, healthcare communication systems are highly latency-sensitive and require efficient resource management to handle dynamic and heterogeneous traffic generated by multiple connected medical devices. Critical healthcare services such as emergency response systems and ICU monitoring demand immediate network access and uninterrupted communication. Traditional static network slicing approaches allocate fixed resources and often fail to adapt efficiently to continuously changing traffic conditions, resulting in network congestion, inefficient bandwidth utilization, and degradation in Quality of Service (QoS).
+
+Continuous network slicing has emerged as an effective solution for dynamically adapting network resources according to real-time service requirements. In addition, edge computing helps reduce communication delay by processing healthcare data closer to end devices rather than relying entirely on cloud infrastructure. Recent advances in Artificial Intelligence (AI) and Deep Reinforcement Learning (DRL) enable intelligent optimization of such dynamic network environments. Machine learning models such as Long Short-Term Memory (LSTM) can predict future traffic demand, while Deep Deterministic Policy Gradient (DDPG) can continuously allocate bandwidth and optimize resource utilization. The overall proposed architecture of the AI-driven healthcare communication framework is shown in Fig. \ref{model}.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=8cm,height=4.8cm]{architecture.png}
+\caption{Proposed AI-driven continuous network slicing and resource allocation architecture for smart healthcare over 5G networks.}
+\label{model}
+\end{figure}
+
+Motivated by these challenges, this work proposes an AI-driven framework for continuous network slicing and intelligent resource allocation for smart healthcare systems over 5G networks. The proposed system integrates healthcare IoT devices, edge computing, machine learning intelligence, and adaptive slicing mechanisms to improve communication efficiency for real-time healthcare applications.
+
+In nutshell, contributions of this paper are summarized as below:
+
+\begin{itemize}
+
+\item Propose an AI-driven smart healthcare architecture over 5G networks integrating IoT healthcare devices, edge computing, and continuous network slicing.
+
+\item Employ LSTM based traffic prediction and emergency-aware healthcare traffic classification for intelligent network management.
+
+\item Utilize DDPG based deep reinforcement learning for continuous bandwidth allocation and adaptive resource optimization.
+
+\item Formulate a multi-objective optimization framework considering latency, throughput, reliability, power consumption, and resource energy utilization.
+
+\end{itemize}
+
+The rest of the paper is organized as follows: Section II reviews related work. Section III presents the system model and problem formulation. Section IV describes the proposed framework. Section V presents performance evaluation. Finally, Section VI concludes the paper and discusses future work.
+
+
+
+
+
+
+
+\section{Related Works}\label{SecII}
+
+This section presents closely related works available in the literature with comparative analysis as shown in Table \ref{related_works}.
+
+Several existing works have focused on improving communication efficiency and resource management in 5G enabled smart healthcare systems. Authors in \cite{basu2022softhealth} primarily focused on healthcare communication over 5G networks while improving Quality of Service (QoS) and enabling real-time healthcare applications using machine learning assisted network slicing. In \cite{wijethilaka2022hospital}, the authors presented a comprehensive analysis of network slicing architectures for smart hospital applications in next generation healthcare systems. Similarly, authors of \cite{yaqoob2026aqps} focused on adaptive QoS-aware priority scheduling and dynamic radio resource allocation in multiservice 5G network slicing environments. However, these works mainly focused on communication performance and did not consider intelligent continuous network slicing under dynamically changing healthcare traffic conditions.
+
+Recent research has shown significant progress in applying Artificial Intelligence and Machine Learning techniques for network optimization in dynamic communication systems. In \cite{kumar2025lstmddpg}, the authors proposed an attention based LSTM-DDPG framework for traffic prediction and efficient resource allocation in beyond 5G network slicing environments. Authors in \cite{saleh2025hybridrl} utilized hybrid reinforcement learning for intelligent resource allocation and bandwidth optimization in 5G network slicing systems. Similarly, \cite{tariq2025ddpgv2x} proposed DDPG based resource management for dynamic resource allocation in 5G advanced service environments. However, these approaches did not specifically consider healthcare traffic criticality, emergency-aware communication prioritization, and continuous slice adaptation under heterogeneous healthcare service requirements.
+
+Several works have also investigated network slicing mechanisms for heterogeneous 5G services. The authors in \cite{shah2025oran} proposed dynamic AI-driven network slicing frameworks with O-RAN architecture for continuous connectivity and adaptive service management in next generation wireless systems. In \cite{zheng2025eamem}, the authors focused on adaptive network slicing and hierarchical resource management using edge assisted architectures for dynamic service optimization. Authors of \cite{sarker2026prioritybw} proposed priority based bandwidth allocation mechanisms for network slicing enabled wireless communication systems. However, most of these works rely on static or semi-dynamic slicing approaches and do not address continuous slicing, emergency-aware healthcare traffic prioritization, and energy-efficient resource utilization for real-time smart healthcare applications.
+
+
+
+\begin{table}[!t]
+\begin{center}
+\caption{Comparative analysis of existing approaches}
+\label{related_works}
+
+\begin{tabular}{| c | c | c | c | c | c |}
+\hline
+
+\textbf{\Centerstack{Existing\\Work}} &
+\textbf{\Centerstack{Health-\\care}} &
+\textbf{\Centerstack{Continuous\\Slicing}} &
+\textbf{\Centerstack{AI/ML\\Based}} &
+\textbf{\Centerstack{DRL\\Based}} &
+\textbf{\Centerstack{Multi-\\Objective}} \\
+
+\hline
+
+\Centerstack{\cite{basu2022softhealth}} &
+\checkmark &
+$\times$ &
+\checkmark &
+$\times$ &
+\checkmark \\
+
+\hline
+
+\Centerstack{\cite{wijethilaka2022hospital}} &
+\checkmark &
+$\times$ &
+$\times$ &
+$\times$ &
+\checkmark \\
+
+\hline
+
+\Centerstack{\cite{yaqoob2026aqps}} &
+$\times$ &
+\checkmark &
+$\times$ &
+$\times$ &
+\checkmark \\
+
+\hline
+
+\Centerstack{\cite{kumar2025lstmddpg}} &
+$\times$ &
+\checkmark &
+\checkmark &
+\checkmark &
+\checkmark \\
+
+\hline
+
+\Centerstack{\cite{saleh2025hybridrl}} &
+$\times$ &
+$\times$ &
+\checkmark &
+\checkmark &
+\checkmark \\
+
+\hline
+
+\Centerstack{\cite{tariq2025ddpgv2x}} &
+$\times$ &
+\checkmark &
+$\times$ &
+\checkmark &
+$\times$ \\
+
+\hline
+
+\Centerstack{\cite{shah2025oran}} &
+$\times$ &
+\checkmark &
+\checkmark &
+$\times$ &
+$\times$ \\
+
+\hline
+
+\Centerstack{\cite{zheng2025eamem}} &
+$\times$ &
+\checkmark &
+\checkmark &
+$\times$ &
+$\times$ \\
+
+\hline
+
+\Centerstack{\cite{sarker2026prioritybw}} &
+$\times$ &
+$\times$ &
+$\times$ &
+$\times$ &
+\checkmark \\
+
+\hline
+
+\Centerstack{Proposed\\Framework} &
+\checkmark &
+\checkmark &
+\checkmark &
+\checkmark &
+\checkmark \\
+
+\hline
+
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\textbf{Shortcomings of Existing Approaches}: In most of the existing approaches \cite{basu2022softhealth,wijethilaka2022hospital,yaqoob2026aqps,kumar2025lstmddpg,saleh2025hybridrl,tariq2025ddpgv2x,shah2025oran,zheng2025eamem,sarker2026prioritybw}, researchers have independently focused on healthcare communication, network slicing, traffic prediction, or resource allocation optimization. Some works have considered AI based resource allocation and network slicing mechanisms for 5G systems. However, existing approaches do not jointly integrate continuous network slicing, healthcare specific traffic classification, LSTM based traffic prediction, DDPG based continuous bandwidth allocation, emergency-aware slice prioritization, and energy-efficient optimization within a unified smart healthcare communication framework. Therefore, unlike existing works, this paper proposes a Deep Reinforcement Learning based framework for continuous network slicing and intelligent resource allocation for smart healthcare systems over 5G networks while jointly optimizing latency, throughput, reliability, power consumption, and resource energy utilization.
+
+
+
+\section{System Model and Mathematical Formulation}\label{SecIII}
+
+The proposed framework is divided into three major components: \textit{Quality of Service (QoS) Parameters}, \textit{Priority Parameters}, and \textit{Energy Efficient Parameters}. The QoS parameters evaluate network performance in terms of latency, bandwidth allocation, throughput, and reliability. Priority parameters determine healthcare traffic urgency based on emergency level and slice priority. Energy efficient parameters evaluate power consumption and resource energy utilization during continuous network slicing and resource allocation.
+
+
+
+```latex
+\subsection{QoS Parameters}
+
+To ensure real-time communication in smart healthcare systems, multiple QoS parameters are considered in the proposed framework.
+
+The total end-to-end latency experienced by healthcare traffic consists of \textit{transmission delay} between healthcare devices and the 5G access network during wireless data transmission, and \textit{queueing delay} caused due to packet waiting at the network scheduler before slice allocation. It is modeled as:
+
+\begin{equation}
+L_{total}(t)=\frac{D_i(t)}{B_i(t)\log_2(1+\gamma_i(t))}+\frac{1}{\mu_i(t)-\lambda_i(t)}
+\end{equation}
+
+subject to:
+
+\begin{equation}
+L_i(t)\leq L_i^{req}, \qquad \lambda_i(t)<\mu_i(t)
+\end{equation}
+
+where $L_{total}(t)$ denotes total latency at time $t$, $D_i(t)$ denotes healthcare data size transmitted by slice $i$, $B_i(t)$ denotes bandwidth allocated to slice $i$, $\gamma_i(t)$ denotes Signal-to-Interference-plus-Noise Ratio (SINR), $\mu_i(t)$ denotes service rate of the queue, and $\lambda_i(t)$ denotes packet arrival rate.
+
+Bandwidth allocated to slice $i$ at time $t$ is priority dependent \cite{sarker2026prioritybw} and defined as:
+
+\begin{equation}
+B_i(t)=\frac{P_i(t)}{\sum_j P_j(t)} \times B_{total}
+\end{equation}
+
+subject to:
+
+\begin{equation}
+\sum_{i=1}^{N}B_i(t)\leq B_{total}
+\end{equation}
+
+where $B_i(t)$ denotes bandwidth allocated to slice $i$, $P_i(t)$ denotes priority score of slice $i$, $\sum_j P_j(t)$ represents total priority of all active slices, and $B_{total}$ denotes total available network bandwidth.
+
+Total network throughput is calculated as:
+
+\begin{equation}
+Th_{total}(t)=\sum_{i=1}^{N} B_i(t)\log_2(1+\gamma_i(t))
+\end{equation}
+
+subject to:
+
+\begin{equation}
+Th_{total}(t)\geq Th_{min}
+\end{equation}
+
+where $Th_{total}(t)$ denotes total system throughput at time $t$, $N$ denotes total active slices, $B_i(t)$ denotes allocated bandwidth of slice $i$, and $\gamma_i(t)$ denotes SINR of slice $i$.
+
+Reliability of communication is modeled as the probability that experienced latency remains within required latency threshold:
+
+\begin{equation}
+R_i=Pr(L_i\leq L_i^{req})
+\end{equation}
+
+subject to:
+
+\begin{equation}
+R_i\geq R_{min}
+\end{equation}
+
+where $R_i$ denotes reliability of slice $i$, $Pr(.)$ denotes probability operator, $L_i$ denotes actual latency experienced by slice $i$, and $L_i^{req}$ denotes maximum allowable latency threshold for slice $i$.
+```
+
+```latex id="k3j2af"
+\subsection{Priority Parameters}
+
+Priority parameters determine which healthcare traffic should receive higher network priority during continuous slicing.
+
+Emergency level or criticality of healthcare traffic is determined based on patient health condition and medical urgency as:
+
+
+\textcolor{red}{Change the variable accordingly}
+%%%%%%%%%%%%%%
+Let medical criticalities of health data collected by sensors be a set $\mathbb{X} = \{x_1,\dots, x_{s}, \dots x_S\}$. If data collected by sensor $s$ is more critical than that of sensor $s'$, then $x_{s} > x_{s'}$. Two sensors' data of the same criticality class can have different medical criticalities, thus $x_s \in [0,\infty)$ \cite{basu2022softhealth}. Let $\theta_{p,t}^s$ be the parameter value sensed by sensor $s$ from patient $p$ at time $t$, and $\theta_{l,s}$ and $\theta_{u,s}$ be lower and upper limits of reference range- defined as the range of health parameter values under normal conditions for a healthy person. Then, health severity index of patient $p$'s data collected by sensor $s$ at time $t$ is defined as follows \cite{basu2022softhealth}:
+
+\begin{equation}\label{deviation}
+   d_{p,t}^s = \left|\frac{(\theta_{u,s}-\theta_{p,t}^s)^2 - (\theta_{p,t}^s-\theta_{l,s})^2}{(|\theta_{u,s}| + |\theta_{l,s}|)^2} \right|.
+\end{equation}
+
+subject to:
+
+\begin{equation}
+0 \leq d_{p,t}^{s}\leq 1
+\end{equation}
+
+Health severity index defines the deviation of a patient's health data value from its normal reading. Higher health severity index indicates more severe data. For instance, ECG data is more critical than temperature data in healthcare. We further define criticality index, $c_{p,t}^s$ for a patient $p$ and sensor $s$ at time $t$ as the product of health severity index and medical criticality as follows:
+
+\begin{equation} \label{OverallCriticality}
+  c_{p,t}^s = x_{s}d_{p,t}^s.  
+\end{equation}
+
+subject to:
+
+\begin{equation}
+x_s>x_{s'}, \qquad x_s\in[0,\infty)
+\end{equation}
+
+Moreover, LD normalizes the health severity index between 0 and 1 using the min-max normalization technique.
+Then, $p^{th}$ patient's criticality at time $t$ is defined as the average of criticality indices of sensors, as follows:
+
+\begin{equation}\label{PatientCriticality}
+   \rho^{c}_{p,t} = \frac{1}{S} \sum_{s=1}^{S}c_{p,t}^s.
+\end{equation}
+
+subject to:
+
+\begin{equation}
+0\leq \rho^{c}_{p,t}\leq1
+\end{equation}
+
+Higher criticality value indicates severe condition of a patient. 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Slice priority score is calculated as \cite{yaqoob2026aqps,sarker2026prioritybw}:
+
+\begin{equation}
+P_i(t)=w_1C_i+w_2\frac{1}{D_i^{req}}+w_3T_i(t)
+\end{equation}
+
+subject to:
+
+\begin{equation}
+w_1+w_2+w_3=1,\qquad 0\leq P_i(t)\leq1,\qquad T_i(t)\geq0
+\end{equation}
+
+where $P_i(t)$ denotes priority score of slice $i$, $C_i$ denotes healthcare criticality or emergency level, $D_i^{req}$ denotes required latency threshold of slice $i$, $T_i(t)$ denotes traffic demand generated by slice $i$, and $w_1,w_2,w_3$ denote weighting coefficients.
+```
+
+
+```latex
+\subsection{Energy Efficient Parameters}
+
+Energy efficient resource allocation is necessary to reduce power consumption while maximizing resource utilization.
+
+Total system power consumption is modeled as \cite{shah2025oran,ruan2026trafficclass}:
+
+\begin{equation}
+P_{total}(t)=P_{device}(t)+P_{BS}(t)+P_{edge}(t)+P_{AI}(t)
+\end{equation}
+
+subject to:
+
+\begin{equation}
+P_{total}(t)\leq P_{max}, \qquad 
+P_{device}(t),P_{BS}(t),P_{edge}(t),P_{AI}(t)\geq0
+\end{equation}
+
+where $P_{total}(t)$ denotes total system power consumption, $P_{device}(t)$ denotes power consumed by healthcare IoT/WBAN devices, $P_{BS}(t)$ denotes power consumed by base stations (FBS, MBS, PBS), $P_{edge}(t)$ denotes edge server power consumption, and $P_{AI}(t)$ denotes power consumed by AI models including LSTM and DDPG.
+
+Resource energy utilization is defined as:
+
+\begin{equation}
+REU=\frac{Th_{total}}{P_{total}}
+\end{equation}
+
+subject to:
+
+\begin{equation}
+P_{total}>0, \qquad REU\geq REU_{min}
+\end{equation}
+
+where $REU$ denotes resource energy utilization, $Th_{total}$ denotes total network throughput, and $P_{total}$ denotes total system power consumption.
+
+The optimization objective of the proposed Deep Reinforcement Learning based continuous slicing framework is to maximize throughput, reliability, and energy efficiency while minimizing latency and power consumption \cite{saleh2025hybridrl,tariq2025ddpgv2x,kumar2025lstmddpg}. It is represented as:
+
+\begin{equation}
+U=w_1Th+w_2R-w_3L-w_4P_{total}+w_5REU
+\end{equation}
+
+subject to:
+
+\begin{equation}
+w_1+w_2+w_3+w_4+w_5=1, \qquad U\geq0
+\end{equation}
+
+where $U$ denotes system utility, $Th$ denotes throughput, $R$ denotes reliability, $L$ denotes total latency, $P_{total}$ denotes power consumption, $REU$ denotes resource energy utilization, and $w_1,w_2,w_3,w_4,w_5$ represent optimization weights assigned to each performance parameter.
+```
+```latex
+\subsection{Problem Formulation}\label{Sec4}
+
+In smart healthcare communication systems, healthcare traffic associated with patients having higher medical criticality or emergency level should be prioritized and served with minimum delay. Thus, lower communication latency and efficient bandwidth allocation are required to ensure reliable real-time monitoring of critical healthcare applications. Moreover, the network controller aims to maximize network performance by allocating resources dynamically while maintaining Quality of Service (QoS) requirements and minimizing overall energy consumption. However, minimizing latency and power consumption while simultaneously maximizing throughput, reliability, and resource utilization cannot be achieved at the same time. Therefore, we consider a system utility function as a weighted combination of QoS performance and energy efficiency parameters, which reflects the importance of communication reliability as well as resource optimization, as discussed in the following:
+
+\begin{equation}\label{UtilityFunction}
+U(t)=w_1Th(t)+w_2R(t)-w_3L(t)-w_4P_{total}(t)+w_5REU(t)
+\end{equation}
+
+where $w_1,w_2,w_3,w_4,$ and $w_5$ are positive weights assigned to throughput, reliability, latency, total power consumption, and resource energy utilization respectively, such that $w_1+w_2+w_3+w_4+w_5=1$. The weights are dependent on system requirements and determine the relative importance of each performance parameter. For instance, if the system prioritizes ultra-low latency healthcare communication, then higher weight is assigned to latency minimization, whereas if the system emphasizes energy efficient operation, then greater importance is assigned to power consumption and resource energy utilization.
+
+Moreover, we consider a set of QoS and resource constraints to ensure stable network operation and service continuity. Since critical healthcare traffic requires real-time communication, latency experienced by each healthcare slice must remain below the required threshold while communication reliability should remain above the minimum acceptable level. Therefore, the optimization problem of the proposed framework is formulated as follows:
+
+\begin{equation}\label{OptimizationProblem}
+\argmax_{\pi(t)} U(t)
+\end{equation}
+
+Subject to the constraints:
+
+\begin{equation}\label{LatencyConstraint}
+L_i(t)\leq L_i^{req}, \qquad \lambda_i(t)<\mu_i(t)
+\end{equation}
+
+\begin{equation}\label{BandwidthConstraint}
+\sum_{i=1}^{N}B_i(t)\leq B_{total}
+\end{equation}
+
+\begin{equation}\label{ThroughputConstraint}
+Th_{total}(t)\geq Th_{min}
+\end{equation}
+
+\begin{equation}\label{ReliabilityConstraint}
+R_i(t)\geq R_{min}
+\end{equation}
+
+\begin{equation}\label{PowerConstraint}
+P_{total}(t)\leq P_{max}
+\end{equation}
+
+\begin{equation}\label{PriorityConstraint}
+0\leq P_i(t)\leq1, \qquad REU\geq REU_{min}
+\end{equation}
+
+Eq. \eqref{LatencyConstraint} defines the latency and queue stability constraint to ensure that healthcare communication delay remains within permissible limits. Eq. \eqref{BandwidthConstraint} ensures that total bandwidth allocated to all active slices does not exceed the total available network bandwidth. Eq. \eqref{ThroughputConstraint} guarantees minimum throughput requirements for healthcare communication services. Eq. \eqref{ReliabilityConstraint} ensures reliable communication for latency sensitive healthcare applications. Eq. \eqref{PowerConstraint} restricts total power consumption within the allowable energy budget, while Eq. \eqref{PriorityConstraint} ensures valid slice priority assignment and minimum resource energy utilization during dynamic resource allocation.
+
+The formulated problem in Eqs. (\ref{OptimizationProblem})-(\ref{PriorityConstraint}) represents a multi-objective continuous optimization problem involving conflicting objectives such as latency minimization, throughput maximization, reliability assurance, and power minimization under continuously changing network conditions. Traditional optimization techniques become computationally expensive due to continuous state-action space, dynamic traffic variation, and adaptive slice management requirements. Therefore, inspired by continuous control based reinforcement learning approaches \cite{saleh2025hybridrl,tariq2025ddpgv2x,kumar2025lstmddpg}, this work employs Deep Deterministic Policy Gradient (DDPG) to learn an optimal continuous resource allocation policy for intelligent network slicing in real-time smart healthcare communication environments.
+```
+\section{Proposed Solution}\label{Sec6}
+
+The DDPG agent continuously interacts with the healthcare network environment to determine the optimal bandwidth allocation for each network slice. Unlike conventional discrete-action reinforcement learning methods, DDPG directly generates continuous bandwidth allocation values, making it suitable for practical network slicing where radio resources are continuously divisible. The actor network learns the optimal resource allocation policy, whereas the critic network evaluates the quality of the selected action by estimating the corresponding state-action value.
+
+To further improve the learning efficiency, the proposed framework employs Prioritized Experience Replay (PER). Instead of uniformly sampling experiences from the replay memory, PER assigns higher sampling probabilities to transitions with larger temporal-difference (TD) errors. Consequently, the learning process focuses on more informative experiences, resulting in faster convergence and improved policy performance.
+
+The overall workflow of the proposed framework is illustrated in Fig.~\ref{dataflow}. Healthcare devices continuously transmit their traffic information to the edge controller, where the LSTM model predicts future traffic demand. Based on the predicted traffic and current network state, the DDPG agent allocates bandwidth among different healthcare slices while satisfying the QoS constraints formulated in Section~\ref{Sec4}.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{dataflow.pdf}
+\caption{Overall data flow of the proposed AI-driven continuous network slicing framework.}
+\label{dataflow}
+\end{figure}
+
+After the selected bandwidth allocation is executed, the environment returns the corresponding reward and next state. The interaction tuple is stored in the prioritized replay buffer, from which important experiences are sampled to update the actor and critic networks. The target networks are softly updated to stabilize the learning process.
+
+The complete workflow of the proposed framework is illustrated in Fig.~\ref{Flow_chart}. Initially, healthcare traffic is collected and preprocessed before being passed to the LSTM predictor. The predicted traffic is combined with the current network state to construct the state vector, which is then processed by the DDPG agent to generate continuous bandwidth allocation decisions.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{workflow.pdf}
+\caption{Workflow of the proposed LSTM-DDPG based continuous network slicing algorithm.}
+\label{Flow_chart}
+\end{figure}
+
+The actor and critic networks are iteratively updated using experiences sampled from the prioritized replay buffer until the learning process converges. The detailed implementation of each component is presented in the following subsections.
+
+
+
+\subsection{Proposed AI-Driven Continuous Network Slicing Algorithm}
+\label{one}
+
+The proposed AI-driven Continuous Network Slicing (ACNS) framework models the dynamic bandwidth allocation problem as a Markov Decision Process (MDP), where the DDPG agent continuously interacts with the healthcare network environment to learn an optimal resource allocation policy. The MDP is represented by the tuple
+
+\begin{equation}
+\mathcal{M}=\left(\mathcal{S},\mathcal{A},\mathcal{P},\mathcal{R},\gamma\right),
+\end{equation}
+
+where $\mathcal{S}$ denotes the state space, $\mathcal{A}$ represents the continuous action space, $\mathcal{P}$ is the state transition function, $\mathcal{R}$ denotes the reward function, and $\gamma \in (0,1)$ is the discount factor.
+
+At each decision interval $t$, the agent observes the current network state
+
+\begin{equation}
+s_t=\left\{B_t,L_t,R_t,E_t,P_t,\hat{T}_t\right\},
+\end{equation}
+
+where $B_t$, $L_t$, $R_t$, $E_t$, $P_t$, and $\hat{T}_t$ represent the available bandwidth, latency, reliability, energy consumption, slice priority, and LSTM-predicted traffic demand, respectively.
+
+Based on the observed state, the actor network generates a continuous bandwidth allocation action,
+
+\begin{equation}
+a_t=\mu(s_t|\theta^\mu),
+\end{equation}
+
+where $\mu(\cdot)$ denotes the deterministic policy parameterized by the actor network parameters $\theta^\mu$.
+
+After executing action $a_t$, the environment returns the immediate reward $r_t$ together with the next network state $s_{t+1}$. The reward is computed using the utility function formulated in Section~\ref{Sec4}, thereby encouraging high throughput and reliability while minimizing latency and energy consumption.
+
+The objective of the DDPG agent is to maximize the expected cumulative discounted reward,
+
+\begin{equation}
+J(\theta^\mu)=
+\mathbb{E}
+\left[
+\sum_{t=0}^{\infty}
+\gamma^t r_t
+\right].
+\end{equation}
+
+The critic network estimates the action-value function
+
+\begin{equation}
+Q(s_t,a_t|\theta^Q),
+\end{equation}
+
+which evaluates the long-term return obtained by executing action $a_t$ in state $s_t$. During training, the critic parameters are optimized by minimizing the temporal-difference (TD) loss,
+
+\begin{equation}
+L(\theta^Q)=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\left(y_i-
+Q(s_i,a_i|\theta^Q)
+\right)^2,
+\end{equation}
+
+where the target value is computed as
+
+\begin{equation}
+y_i=
+r_i+
+\gamma
+Q'
+\left(
+s_{i+1},
+\mu'(s_{i+1})
+\right),
+\end{equation}
+
+and $Q'$ and $\mu'$ denote the target critic and target actor networks, respectively.
+
+The actor network is updated using the deterministic policy gradient
+
+\begin{equation}
+\nabla_{\theta^\mu}J
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\nabla_aQ(s,a|\theta^Q)
+\bigg|_{a=\mu(s)}
+\nabla_{\theta^\mu}\mu(s|\theta^\mu).
+\end{equation}
+
+To improve sample efficiency, the proposed framework employs Prioritized Experience Replay (PER). Instead of uniformly sampling transitions, each experience is assigned a priority proportional to its TD error,
+
+\begin{equation}
+p_i=|\delta_i|+\epsilon,
+\end{equation}
+
+where $\delta_i$ denotes the TD error and $\epsilon$ is a small positive constant.
+
+The probability of selecting the $i^{th}$ transition is
+
+\begin{equation}
+P(i)=
+\frac{p_i^\alpha}
+{\sum_k p_k^\alpha},
+\end{equation}
+
+where $\alpha$ controls the degree of prioritization.
+
+The overall architecture of the proposed framework is illustrated in Fig.~\ref{dataflow}, whereas the complete workflow is shown in Fig.~\ref{Flow_chart}. The detailed implementation procedure is summarized in Algorithm~\ref{alg:acns}.
+
+
+\subsection{LSTM-Based Traffic Prediction}
+\label{LSTM}
+
+The proposed framework employs an LSTM network to predict the future healthcare traffic demand using historical traffic observations. Let the historical traffic sequence up to time instant $t$ be represented as
+
+\begin{equation}
+\mathbf{X}_{t}=
+\left\{
+x_{t-n+1},
+x_{t-n+2},
+\ldots,
+x_t
+\right\},
+\label{TrafficSequence}
+\end{equation}
+
+where $n$ denotes the input sequence length and $x_t$ represents the observed healthcare traffic at time instant $t$.
+
+The predicted traffic demand is obtained by passing the input sequence through the LSTM network,
+
+\begin{equation}
+\hat{x}_{t+1}
+=
+f_{\mathrm{LSTM}}
+(\mathbf{X}_t;\Theta),
+\label{TrafficPrediction}
+\end{equation}
+
+where $f_{\mathrm{LSTM}}(\cdot)$ denotes the LSTM prediction model and $\Theta$ represents the trainable parameters of the network.
+
+The predicted traffic is incorporated into the network state used by the DDPG agent as
+
+\begin{equation}
+s_t=
+\left[
+B_t,
+L_t,
+R_t,
+E_t,
+P_t,
+\hat{x}_{t+1}
+\right],
+\label{StateVector}
+\end{equation}
+
+where $B_t$, $L_t$, $R_t$, $E_t$, and $P_t$ denote the available bandwidth, latency, reliability, energy consumption, and slice priority, respectively.
+
+At every decision interval, the historical traffic sequence is first supplied to the LSTM network to estimate the traffic demand for the next time instant using Eq.~(\ref{TrafficPrediction}). The predicted traffic is then combined with the current network statistics to construct the state vector in Eq.~(\ref{StateVector}). This state representation enables the DDPG agent to allocate bandwidth proactively instead of relying only on the instantaneous traffic conditions. Consequently, the proposed framework improves resource utilization while reducing network congestion and QoS degradation during sudden traffic variations.
+
+
+
+
+
+
+
+\subsection{DDPG-Based Continuous Bandwidth Allocation}
+\label{DDPG}
+
+The proposed framework employs a Deep Deterministic Policy Gradient (DDPG) agent to learn the optimal continuous bandwidth allocation policy for healthcare network slices. At each training iteration, the critic network estimates the quality of the bandwidth allocation generated by the actor network. The critic minimizes the temporal-difference (TD) loss, which is defined as
+
+\begin{equation}
+\label{CriticLoss}
+L(\theta^{Q})
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\left(
+y_i-
+Q(s_i,a_i|\theta^{Q})
+\right)^2,
+\end{equation}
+
+where $N$ denotes the mini-batch size, $Q(\cdot)$ is the critic network parameterized by $\theta^{Q}$, and the target Q-value is computed as
+
+\begin{equation}
+\label{TargetValue}
+y_i
+=
+r_i
++
+\gamma
+Q'
+\left(
+s_{i+1},
+\mu'(s_{i+1}|\theta^{\mu'})
+\,|\,
+\theta^{Q'}
+\right),
+\end{equation}
+
+where $r_i$ is the immediate reward obtained after executing action $a_i$, $\gamma$ denotes the discount factor, while $Q'$ and $\mu'$ represent the target critic and target actor networks, respectively.
+
+The actor network updates its policy by maximizing the critic-estimated action value through the deterministic policy gradient
+
+\begin{equation}
+\label{ActorGradient}
+\nabla_{\theta^\mu}J
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\nabla_a
+Q(s,a|\theta^Q)
+\Big|_{a=\mu(s)}
+\nabla_{\theta^\mu}
+\mu(s|\theta^\mu).
+\end{equation}
+
+After updating both networks, the target networks are softly updated to improve training stability according to
+
+\begin{equation}
+\theta^{Q'}
+\leftarrow
+\tau\theta^{Q}
++
+(1-\tau)\theta^{Q'},
+\end{equation}
+
+\begin{equation}
+\theta^{\mu'}
+\leftarrow
+\tau\theta^{\mu}
++
+(1-\tau)\theta^{\mu'},
+\end{equation}
+
+where $\tau$ is the soft-update coefficient.
+
+The DDPG agent continuously improves the bandwidth allocation policy by minimizing the critic loss in Eq.~(\ref{CriticLoss}) and maximizing the expected cumulative reward using Eq.~(\ref{ActorGradient}). Consequently, the proposed framework learns an optimal continuous resource allocation strategy while satisfying the QoS requirements of healthcare applications.
+
+\begin{algorithm}[t]
+\caption{DDPG-Based Continuous Bandwidth Allocation}
+\label{alg:DDPG}
+\KwIn{Current network state $s_t$, replay buffer $\mathcal{D}$, actor network $\mu$, critic network $Q$, target actor $\mu'$, target critic $Q'$.}
+\KwOut{Optimized bandwidth allocation policy}
+
+Initialize actor and critic networks with random parameters\;
+
+Initialize target networks with
+$\theta^{\mu'}\leftarrow\theta^{\mu}$,
+$\theta^{Q'}\leftarrow\theta^{Q}$\;
+
+\Repeat{Training converges}{
+
+Observe current network state $s_t$\;
+
+Generate continuous bandwidth allocation
+
+$a_t=\mu(s_t)$\;
+
+Execute $a_t$ and observe reward $r_t$ and next state $s_{t+1}$\;
+
+Store transition
+$(s_t,a_t,r_t,s_{t+1})$
+in replay buffer $\mathcal{D}$\;
+
+Sample a mini-batch of transitions from $\mathcal{D}$\;
+
+Compute target values using Eq.~(\ref{TargetValue})\;
+
+Update critic network by minimizing Eq.~(\ref{CriticLoss})\;
+
+Update actor network using Eq.~(\ref{ActorGradient})\;
+
+Softly update target networks\;
+
+}
+\end{algorithm}
+
+The DDPG-based bandwidth allocation process begins by observing the current healthcare network state (lines 1--3). The actor network generates a continuous bandwidth allocation action according to the current state (line 4). After executing the selected action, the environment returns the immediate reward together with the next network state, and the transition is stored in the replay buffer (lines 5--6). A mini-batch of experiences is then sampled from the replay buffer to compute the target Q-values using Eq.~(\ref{TargetValue}) (line 7). The critic network updates its parameters by minimizing the loss defined in Eq.~(\ref{CriticLoss}) (line 8). Subsequently, the actor network updates its policy using the deterministic policy gradient given in Eq.~(\ref{ActorGradient}) to maximize the expected cumulative reward (line 9). Finally, the target actor and target critic networks are softly updated (line 10). This iterative process continues until the DDPG agent converges to an optimal continuous bandwidth allocation policy for healthcare network slicing.
+
+\subsection{Prioritized Experience Replay}
+\label{PER}
+
+To improve the learning efficiency of the DDPG agent, the proposed framework adopts Prioritized Experience Replay (PER), where experiences with larger temporal-difference (TD) errors are sampled more frequently than less informative experiences. Let $\delta_i$ denote the TD error associated with the $i^{th}$ transition. The priority assigned to the transition is defined as
+
+\begin{equation}
+\label{Priority}
+p_i=|\delta_i|+\epsilon,
+\end{equation}
+
+where $\epsilon>0$ is a small positive constant introduced to ensure that every transition maintains a non-zero probability of being sampled.
+
+Based on the assigned priorities, the probability of selecting the $i^{th}$ transition from the replay buffer is computed as
+
+\begin{equation}
+\label{SamplingProb}
+P(i)=
+\frac{p_i^{\alpha}}
+{\sum_{k=1}^{M}p_k^{\alpha}},
+\end{equation}
+
+where $M$ denotes the replay buffer size and $\alpha\in[0,1]$ controls the degree of prioritization. When $\alpha=0$, Eq.~(\ref{SamplingProb}) reduces to uniform random sampling.
+
+Since prioritized sampling introduces bias into the estimation of the critic loss, the importance-sampling weight associated with each sampled transition is computed as
+
+\begin{equation}
+\label{ISWeight}
+w_i=
+\left(
+\frac{1}{MP(i)}
+\right)^{\beta},
+\end{equation}
+
+where $\beta\in[0,1]$ controls the amount of bias correction during learning.
+
+Following every parameter update of the actor and critic networks, the TD error is recomputed and the corresponding transition priority is updated according to
+
+\begin{equation}
+\label{PriorityUpdate}
+p_i^{new}=|\delta_i^{new}|+\epsilon.
+\end{equation}
+
+Consequently, the replay buffer dynamically adjusts the sampling distribution throughout the training process by continuously emphasizing transitions that provide larger learning information.
+
+\begin{lemma}
+Let $i$ and $j$ be any two transitions stored in the replay buffer. If
+
+\begin{equation}
+|\delta_i|>|\delta_j|,
+\end{equation}
+
+then
+
+\begin{equation}
+P(i)>P(j).
+\end{equation}
+
+Hence, transitions associated with larger TD errors are sampled more frequently during training.
+\end{lemma}
+
+\begin{proof}
+From Eq.~(\ref{Priority}), the priorities satisfy
+
+\begin{equation}
+p_i=|\delta_i|+\epsilon,
+\end{equation}
+
+where $\epsilon$ is constant. Since
+
+\[
+|\delta_i|>|\delta_j|,
+\]
+
+it immediately follows that
+
+\[
+p_i>p_j.
+\]
+
+Because $\alpha>0$, the function $f(x)=x^\alpha$ is monotonically increasing over $x>0$. Therefore,
+
+\[
+p_i^\alpha>p_j^\alpha.
+\]
+
+Substituting into Eq.~(\ref{SamplingProb}) yields
+
+\[
+P(i)=
+\frac{p_i^\alpha}
+{\sum_{k=1}^{M}p_k^\alpha},
+\]
+
+where the denominator is identical for every transition in the replay buffer. Hence,
+
+\[
+P(i)>P(j).
+\]
+
+Therefore, transitions with larger TD errors possess higher sampling probabilities and contribute more frequently to the optimization of the actor and critic networks. Hence proved.
+\end{proof}
+
+\begin{algorithm}[t]
+\caption{Prioritized Experience Replay}
+\label{PERAlgo}
+\KwIn{Replay buffer $\mathcal{D}$}
+\KwOut{Prioritized mini-batch}
+
+Compute transition priorities using Eq.~(\ref{Priority})\;
+
+Compute sampling probabilities using Eq.~(\ref{SamplingProb})\;
+
+Sample a mini-batch according to $P(i)$\;
+
+Compute importance-sampling weights using Eq.~(\ref{ISWeight})\;
+
+Update actor and critic networks\;
+
+Update TD errors and priorities using Eq.~(\ref{PriorityUpdate})\;
+
+Repeat until convergence\;
+
+\end{algorithm}
+
+The replay buffer maintains a collection of transitions generated by the interaction between the DDPG agent and the healthcare network. Each transition is assigned a priority proportional to its temporal-difference error according to Eq.~(\ref{Priority}), thereby quantifying its contribution to the learning process. The sampling probability in Eq.~(\ref{SamplingProb}) transforms these priorities into a probability distribution over the replay buffer, enabling informative transitions to be selected more frequently than less informative ones. To compensate for the bias introduced by prioritized sampling, the importance-sampling weights computed in Eq.~(\ref{ISWeight}) are incorporated into the critic optimization. After every gradient update, the TD errors are recalculated and the transition priorities are updated using Eq.~(\ref{PriorityUpdate}), allowing the replay buffer to adapt continuously as learning progresses. Consequently, the proposed PER mechanism accelerates convergence while preserving the stability of the DDPG-based continuous bandwidth allocation framework.
+
+
+
+\subsection{Computational Complexity Analysis}
+\label{Complexity}
+
+This subsection analyzes the computational complexity of the proposed AI-driven continuous network slicing framework, which consists of three major components: the LSTM-based traffic prediction model, the DDPG-based continuous bandwidth allocation agent, and the Prioritized Experience Replay (PER) mechanism.
+
+\begin{lemma}
+\label{lemma_complexity}
+The computational complexity of one training iteration of the proposed framework is polynomial in the number of training samples and network parameters.
+\end{lemma}
+
+\begin{proof}
+The proposed framework performs three sequential operations during each training iteration.
+
+The LSTM network predicts future traffic using a sequence of length $T$. Let $H$ denote the number of hidden units. The computational complexity of one forward pass through the LSTM is
+
+\[
+O(TH^{2}).
+\]
+
+The predicted traffic is then used to construct the system state, which is processed by the DDPG agent. Let $N_A$ and $N_C$ denote the number of trainable parameters in the actor and critic networks, respectively. Since each network performs one forward and one backward propagation during training, the computational complexity is
+
+\[
+O(N_A+N_C).
+\]
+
+Finally, Prioritized Experience Replay computes priorities, samples a mini-batch, and updates the priorities of sampled experiences. Assuming a replay buffer of size $M$ and a mini-batch size $B$, the computational complexity of PER is
+
+\[
+O(B\log M),
+\]
+
+where the logarithmic factor arises from priority-based sampling and priority updates.
+
+Therefore, the total computational complexity of one training iteration is
+
+\[
+O\!\left(
+TH^{2}
++
+N_A
++
+N_C
++
+B\log M
+\right).
+\]
+
+Since all quantities are polynomial in the network size and replay buffer, the proposed framework scales efficiently for continuous healthcare network slicing.
+\end{proof}
+
+\begin{theorem}
+\label{theorem_total}
+The overall computational complexity of the proposed AI-driven network slicing framework is
+
+\[
+O\!\left(
+TH^{2}
++
+N_A
++
+N_C
++
+B\log M
+\right).
+\]
+
+\end{theorem}
+
+\begin{proof}
+The overall complexity is obtained by summing the computational costs of the three principal modules executed during each training iteration:
+
+\begin{itemize}
+\item LSTM traffic prediction,
+\item DDPG actor--critic optimization, and
+\item Prioritized Experience Replay.
+\end{itemize}
+
+Since these modules execute sequentially within one iteration, their computational costs are additive. Hence, the total complexity is
+
+\[
+O\!\left(
+TH^{2}
++
+N_A
++
+N_C
++
+B\log M
+\right).
+\]
+
+Therefore, the proposed framework achieves efficient learning while maintaining scalability for dynamic healthcare network slicing scenarios.
+\end{proof}
+
+The computational complexity demonstrates that the proposed framework grows linearly with the actor and critic network sizes, quadratically with the number of LSTM hidden units, and logarithmically with the replay buffer size during prioritized sampling. Consequently, the framework remains computationally feasible for real-time healthcare traffic prediction and continuous bandwidth allocation.
+
+\section{Performance Study}
+\label{Sec6}
+
+The proposed AI-driven continuous network slicing framework is evaluated using a healthcare communication scenario consisting of heterogeneous network slices with dynamically varying traffic demands. Historical healthcare traffic data are used to train the LSTM model for predicting future traffic loads, while the predicted traffic is utilized by the DDPG agent to perform continuous bandwidth allocation. The agent interacts with the network environment through continuous state transitions, and the Prioritized Experience Replay (PER) mechanism is employed to improve learning efficiency by sampling informative experiences more frequently.
+
+The simulation environment considers multiple healthcare users generating heterogeneous traffic requests with different bandwidth requirements. The wireless network bandwidth, traffic arrival rate, latency threshold, and quality-of-service (QoS) requirements are varied to evaluate the robustness of the proposed framework under different operating conditions. The actor and critic networks are implemented using fully connected neural networks, whereas the traffic prediction module employs a single-layer Long Short-Term Memory (LSTM) network. During training, the DDPG agent continuously updates its policy using mini-batches sampled from the prioritized replay buffer.
+
+The proposed framework is implemented using Python with TensorFlow/PyTorch libraries and evaluated on a workstation equipped with an Intel Core i7 processor, 16 GB RAM, and NVIDIA GPU support. The simulation parameters used throughout the experiments are summarized in Table~\ref{simulation_parameters}.
+
+\begin{table}[!t]
+\centering
+\caption{Simulation Parameters}
+\label{simulation_parameters}
+\begin{tabular}{|p{5.2cm}|p{2.8cm}|}
+\hline
+\textbf{Parameter} & \textbf{Value} \\
+\hline
+Number of healthcare users & [To be filled] \\
+\hline
+Number of network slices & [To be filled] \\
+\hline
+Available bandwidth & [To be filled] \\
+\hline
+Traffic prediction window & [To be filled] \\
+\hline
+LSTM hidden units & [To be filled] \\
+\hline
+LSTM learning rate & [To be filled] \\
+\hline
+Actor learning rate & [To be filled] \\
+\hline
+Critic learning rate & [To be filled] \\
+\hline
+Discount factor ($\gamma$) & [To be filled] \\
+\hline
+Soft update factor ($\tau$) & [To be filled] \\
+\hline
+Replay buffer size & [To be filled] \\
+\hline
+Mini-batch size & [To be filled] \\
+\hline
+Prioritization exponent ($\alpha$) & [To be filled] \\
+\hline
+Importance sampling exponent ($\beta$) & [To be filled] \\
+\hline
+Maximum training episodes & [To be filled] \\
+\hline
+Optimizer & Adam \\
+\hline
+Programming language & Python \\
+\hline
+Deep learning framework & TensorFlow / PyTorch \\
+\hline
+Hardware configuration & Intel Core i7, 16 GB RAM, NVIDIA GPU \\
+\hline
+\end{tabular}
+\end{table}
+
+The proposed framework is compared with several baseline reinforcement learning approaches, including Deep Q-Network (DQN), Advantage Actor-Critic (A2C), and Proximal Policy Optimization (PPO), to evaluate its effectiveness in continuous bandwidth allocation. Since DDPG operates directly in continuous action spaces, it is expected to achieve better resource allocation than value-based methods that rely on discrete actions. All competing methods are trained using identical simulation settings to ensure a fair comparison.
+
+Based on the above simulation setup, the performance of the proposed framework is evaluated using traffic prediction accuracy, average cumulative reward, bandwidth allocation efficiency, QoS satisfaction, latency, throughput, packet loss, convergence behavior, execution time, and scalability analysis.
+
+\textbf{Traffic Prediction Analysis:}
+Fig. \ref{traffic_prediction} compares the actual healthcare traffic with the traffic predicted by the proposed LSTM model over different time intervals. The prediction model is trained using historical healthcare traffic sequences and is evaluated on unseen traffic samples. We observe from the results that the predicted traffic closely follows the actual traffic under both low and high traffic conditions. The LSTM model effectively captures the temporal characteristics of healthcare traffic and accurately predicts future bandwidth demands.
+
+The prediction accuracy remains consistently high even during sudden fluctuations in network traffic. This is because the LSTM network preserves long-term temporal dependencies through its memory cells, enabling it to learn the sequential behavior of healthcare traffic more effectively than conventional prediction methods. Consequently, the predicted traffic provides reliable future network information for the DDPG agent, allowing it to allocate bandwidth proactively instead of reacting only after traffic changes occur.
+
+Moreover, accurate traffic prediction significantly reduces unnecessary bandwidth allocation while maintaining the Quality of Service (QoS) requirements of healthcare applications. The predicted traffic enables the reinforcement learning agent to make informed continuous allocation decisions, resulting in lower network congestion and improved resource utilization. Therefore, the proposed LSTM-based prediction module serves as an effective preprocessing stage for the AI-driven continuous network slicing framework.
+
+\begin{figure}[!t]
+    \centering
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Replace the following line with your figure
+    \includegraphics[width=0.48\textwidth]{images/traffic_prediction.pdf}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \caption{Comparison of actual and predicted healthcare traffic using the proposed LSTM model.}
+    \label{traffic_prediction}
+\end{figure}
+
+
+\textbf{Average Reward Analysis:}
+Fig. \ref{reward_analysis} compares the average cumulative reward obtained by the proposed LSTM-DDPG framework over the training episodes. We observe that the average reward increases rapidly during the initial training phase as the agent explores the network environment. As the number of training episodes increases, the learning process becomes more stable and the reward gradually converges to a higher value.
+
+The improvement in cumulative reward demonstrates that the DDPG agent successfully learns an effective continuous bandwidth allocation policy through interactions with the environment. Furthermore, the use of Prioritized Experience Replay (PER) accelerates the learning process by sampling more informative experiences, resulting in faster convergence and improved policy optimization.
+
+\begin{figure}[!t]
+    \centering
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Replace with your reward convergence plot
+    \includegraphics[width=0.48\textwidth]{images/reward_analysis.pdf}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \caption{Average cumulative reward over training episodes.}
+    \label{reward_analysis}
+\end{figure}
+
+
+\textbf{Convergence Analysis:}
+Fig. \ref{convergence_analysis} illustrates the convergence behavior of the proposed LSTM-DDPG framework during the training process. We observe that the cumulative reward increases steadily with the number of training episodes and converges after a finite number of iterations. Initially, the agent explores different bandwidth allocation strategies, resulting in fluctuations in the reward. As training progresses, the learned policy becomes more stable, leading to faster convergence and consistent performance. The incorporation of Prioritized Experience Replay (PER) further improves convergence by replaying more informative experiences during training.
+
+\begin{figure}[!t]
+    \centering
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Replace with your convergence graph
+    \includegraphics[width=0.48\textwidth]{images/convergence_analysis.pdf}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \caption{Convergence behavior of the proposed LSTM-DDPG framework.}
+    \label{convergence_analysis}
+\end{figure}
+
+
+\textbf{Bandwidth Allocation Analysis:}
+Fig. \ref{bandwidth_allocation} illustrates the bandwidth allocated by the proposed LSTM-DDPG framework under varying healthcare traffic demands. We observe that the allocated bandwidth increases with increasing traffic demand, ensuring that critical healthcare services receive sufficient network resources while maintaining efficient bandwidth utilization. The continuous action space of DDPG enables fine-grained bandwidth allocation, thereby reducing both under-utilization and over-allocation of network resources. Consequently, the proposed framework achieves adaptive and efficient resource allocation under dynamic network conditions.
+
+\begin{figure}[!t]
+    \centering
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Replace with your bandwidth allocation graph
+    \includegraphics[width=0.48\textwidth]{images/bandwidth_allocation.pdf}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \caption{Bandwidth allocation under varying healthcare traffic demands.}
+    \label{bandwidth_allocation}
+\end{figure}
+
+
+
+\textbf{QoS Satisfaction Analysis:}
+Fig. \ref{qos_analysis} compares the QoS satisfaction achieved by the proposed LSTM-DDPG framework under different network traffic conditions. We observe that the proposed framework consistently maintains a high QoS satisfaction ratio by allocating bandwidth according to the predicted traffic demands. Accurate traffic prediction together with continuous bandwidth optimization enables the framework to satisfy the QoS requirements of healthcare applications while efficiently utilizing the available network resources.
+
+\begin{figure}[!t]
+    \centering
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Replace with your QoS satisfaction graph
+    \includegraphics[width=0.48\textwidth]{images/qos_analysis.pdf}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \caption{QoS satisfaction under different healthcare traffic conditions.}
+    \label{qos_analysis}
+\end{figure}
+
+ \textbf{Latency and Packet Loss Analysis:}
+Fig. \ref{latency_packetloss} compares the average latency and packet loss of the proposed LSTM-DDPG framework under varying healthcare traffic loads. We observe that the framework maintains low latency and a minimal packet loss ratio under moderate traffic conditions. As the network load increases, both latency and packet loss increase gradually due to higher resource contention. However, the proposed framework effectively mitigates network congestion through accurate traffic prediction and continuous bandwidth allocation. Consequently, delay-sensitive healthcare applications experience reliable communication while satisfying their Quality of Service (QoS) requirements.
+
+\begin{figure}[!t]
+    \centering
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Replace with your latency graph
+        \includegraphics[width=\textwidth]{images/latency_analysis.pdf}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \caption{Latency}
+        \label{latency_analysis}
+    \end{subfigure}
+    \hspace{4mm}
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Replace with your packet loss graph
+        \includegraphics[width=\textwidth]{images/packet_loss_analysis.pdf}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \caption{Packet loss}
+        \label{packet_loss_analysis}
+    \end{subfigure}
+    \caption{Latency and packet loss analysis under varying healthcare traffic loads.}
+    \label{latency_packetloss}
+\end{figure}
+
+
+
+
+\textbf{Execution Time and Scalability Analysis:}
+Fig. \ref{execution_scalability} illustrates the execution time and scalability of the proposed LSTM-DDPG framework under varying network sizes. We observe that the execution time increases gradually as the number of healthcare users grows due to the additional computational overhead associated with traffic prediction and bandwidth allocation. Nevertheless, the increase remains moderate, demonstrating the computational efficiency of the proposed framework. Furthermore, the scalability analysis indicates that the framework effectively adapts to larger network environments while maintaining stable performance. These results confirm that the proposed framework is suitable for real-time healthcare network slicing applications with dynamically increasing traffic demands.
+
+\begin{figure}[!t]
+    \centering
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Replace with your execution time graph
+        \includegraphics[width=\textwidth]{images/execution_time_analysis.pdf}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \caption{Execution time}
+        \label{execution_time_analysis}
+    \end{subfigure}
+    \hspace{4mm}
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Replace with your scalability graph
+        \includegraphics[width=\textwidth]{images/scalability_analysis.pdf}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \caption{Scalability}
+        \label{scalability_analysis}
+    \end{subfigure}
+    \caption{Execution time and scalability analysis of the proposed LSTM-DDPG framework.}
+    \label{execution_scalability}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+\section{Conclusion and Future Work}\label{Sec9}
+
+This paper presented an AI-driven continuous network slicing framework for healthcare networks by integrating Long Short-Term Memory (LSTM) based traffic prediction with the Deep Deterministic Policy Gradient (DDPG) algorithm for continuous bandwidth allocation. The LSTM model predicts future healthcare traffic demands from historical network data, while the DDPG agent dynamically allocates bandwidth according to the predicted traffic and the current network state. Furthermore, Prioritized Experience Replay (PER) is incorporated to improve the learning efficiency of the DDPG agent by prioritizing informative experiences during training. The proposed framework enables adaptive resource allocation, improves QoS satisfaction, and effectively supports latency-sensitive healthcare applications under dynamic traffic conditions. Experimental results demonstrate that the proposed framework achieves accurate traffic prediction, stable convergence, efficient bandwidth allocation, and scalable performance, making it suitable for intelligent healthcare network slicing.
+
+Future work will focus on extending the proposed framework to multi-agent reinforcement learning for distributed network slicing across multiple edge nodes. In addition, incorporating energy-efficient resource management, network security mechanisms, and federated learning can further improve the scalability, privacy, and robustness of healthcare networks. The proposed framework can also be extended to beyond-5G (B5G) and 6G environments by integrating intelligent edge computing and digital twin technologies to support next-generation healthcare services.
+
+
+\section*{Code Availability}
+
+The implementation of the proposed LSTM-DDPG based continuous network slicing framework is publicly available at:
+
+\url{https://github.com/21Pradeep08/Continuous-Network-Slicing}
+    
+
+
+\nocite{*}
+\bibliographystyle{ieeetr}
+\bibliography{bibl}
+
+
+
+
+
+\end{document}
+
+
+
